@@ -1,103 +1,190 @@
-# Task Management API Documentation
+# 🧠 API Documentation
 
-Base URL: `http://localhost:3000`
+## 🔹 Base URL
 
----
-
-## Endpoints
-
-### 1. Get All Tasks
-
-- **GET** `/tasks`
-- **Response:**
-  - `200 OK` — Array of task objects
-
-### 2. Get Task by ID
-
-- **GET** `/tasks/:id`
-- **Params:**
-  - `id` (number, required)
-- **Response:**
-  - `200 OK` — Task object
-  - `404 Not Found` — If not found
-
-### 3. Add Task
-
-- **POST** `/tasks`
-- **Body:**
-  ```json
-  {
-    "title": "string (required)",
-    "completed": "boolean (optional)"
-  }
-  ```
-- **Response:**
-  - `201 Created` — Created task object
-  - `400 Bad Request` — Validation error
-
-### 4. Update Task
-
-- **PUT** `/tasks/:id`
-- **Params:**
-  - `id` (number, required)
-- **Body:**
-  ```json
-  {
-    "title": "string (optional)",
-    "completed": "boolean (optional)"
-  }
-  ```
-- **Response:**
-  - `200 OK` — Updated task object
-  - `400 Bad Request` — Validation error
-  - `404 Not Found` — If not found
-
-### 5. Delete Task
-
-- **DELETE** `/tasks/:id`
-- **Params:**
-  - `id` (number, required)
-- **Response:**
-  - `200 OK` — Success message
-  - `404 Not Found` — If not found
-
-### 6. Delete All Tasks
-
-- **DELETE** `/tasks`
-- **Response:**
-  - `200 OK` — Success message
-
----
-
-## Task Object Schema
-
-```json
-{
-  "id": number,
-  "title": string,
-  "completed": boolean,
-  "createdAt": string (ISO 8601),
-  "updatedAt": string (ISO 8601 | null)
-}
+```
+http://localhost:3000/tasks
 ```
 
 ---
 
-## Error Response Example
+## 📜 **1. Get All Tasks**
+
+**GET** `/tasks`
+
+### ✅ Response:
 
 ```json
 {
-  "message": "Validation error",
-  "errors": [
-    { "path": "title", "message": "Title is required and must be non-empty." }
+  "success": true,
+  "data": [
+    {
+      "id": 1,
+      "title": "Learn Express.js",
+      "completed": false,
+      "createdAt": "2025-10-16T09:00:00.000Z",
+      "updatedAt": null
+    }
   ]
 }
 ```
 
 ---
 
-## Notes
+## 📜 **2. Get Task by ID**
 
-- All endpoints return JSON.
-- Validation errors return HTTP 400 with details.
-- Dates are in ISO 8601 string format.
+**GET** `/tasks/:id`
+
+### ✅ Example:
+
+```
+GET /tasks/1
+```
+
+### ✅ Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 1,
+    "title": "Learn Express.js",
+    "completed": false,
+    "createdAt": "2025-10-16T09:00:00.000Z",
+    "updatedAt": null
+  }
+}
+```
+
+---
+
+## 🟢 **3. Create Task**
+
+**POST** `/tasks`
+
+### 🧾 Body:
+
+```json
+{
+  "title": "Learn Prisma ORM"
+}
+```
+
+### ✅ Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 2,
+    "title": "Learn Prisma ORM",
+    "completed": false,
+    "createdAt": "2025-10-16T09:10:00.000Z"
+  }
+}
+```
+
+### ⚠️ Validation:
+
+If you send an empty title:
+
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "errors": [{ "path": "title", "message": "Title is required" }]
+}
+```
+
+---
+
+## 🟡 **4. Update Task**
+
+**PUT** `/tasks/:id`
+
+### 🧾 Body:
+
+```json
+{
+  "title": "Learn Prisma + Zod",
+  "completed": true
+}
+```
+
+### ✅ Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": 2,
+    "title": "Learn Prisma + Zod",
+    "completed": true,
+    "updatedAt": "2025-10-16T09:20:00.000Z"
+  }
+}
+```
+
+---
+
+## 🔴 **5. Delete Task**
+
+**DELETE** `/tasks/:id`
+
+### ✅ Response:
+
+```json
+{
+  "success": true,
+  "message": "Task 2 deleted"
+}
+```
+
+---
+
+## 🧹 **6. Error Example**
+
+If a task doesn’t exist:
+
+```json
+{
+  "success": false,
+  "message": "Task not found"
+}
+```
+
+---
+
+# 🧰 Middleware Summary
+
+| Middleware         | Description                                   |
+| ------------------ | --------------------------------------------- |
+| `logger`           | Logs every request with response time         |
+| `errorHandler`     | Catches thrown errors and sends JSON response |
+| `validate(schema)` | Validates incoming requests with Zod          |
+
+---
+
+# 🧪 Development Commands
+
+| Command                  | Description                               |
+| ------------------------ | ----------------------------------------- |
+| `npm run dev`            | Run the app in dev mode (with hot reload) |
+| `npx prisma studio`      | Open the database dashboard               |
+| `npx prisma migrate dev` | Apply migrations                          |
+| `npx prisma generate`    | Re-generate Prisma client                 |
+
+---
+
+# 💡 Future Improvements
+
+- 🔐 Add Authentication (JWT)
+- 👥 Add User model and relations (User ↔ Task)
+- 🧱 Implement pagination and filtering
+- 🧰 Add unit tests with Jest
+
+---
+
+# 🧑‍💻 Author
+
+**Obsa Abdulkadir**

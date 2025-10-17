@@ -1,39 +1,31 @@
-import { taskMetadata, TaskSchema, type Task } from "../models/taskSchema.js";
-import { FileDb } from "../storage/fileDb.js";
+import { prisma } from "../db.js";
 
 export class TaskService {
-  private db: FileDb<Task>;
+  constructor() {}
 
-  constructor() {
-    this.db = new FileDb<Task>("./data/tasks.json", taskMetadata, TaskSchema);
+  async listTasks() {
+    return prisma.task.findMany({ orderBy: { id: "asc" } });
   }
 
-  async listTasks(): Promise<Task[]> {
-    return this.db.getAll();
+  async getTask(id: number) {
+    return prisma.task.findUnique({ where: { id } });
   }
 
-  async getTask(id: number): Promise<Task | null> {
-    return this.db.getById(id);
-  }
-
-  async createTask(data: Omit<Task, "id">): Promise<Task> {
-    return this.db.create({
-      ...data,
-      createdAt: new Date().toISOString(),
-      updatedAt: null,
+  async createTask(title: string) {
+    return prisma.task.create({
+      data: { title },
     });
   }
 
-  async updateTask(id: number, updates: Partial<Task>): Promise<Task | null> {
-    updates.updatedAt = new Date().toISOString();
-    return this.db.update(id, updates);
+  async updateTask(id: number, updates: { title?: string }) {
+    return prisma.task.update({
+      where: { id },
+      data: { ...updates, updatedAt: new Date() },
+    });
   }
 
-  async deleteTask(id: number): Promise<boolean> {
-    return this.db.delete(id);
-  }
-
-  async clearAll(): Promise<void> {
-    await this.db.clear();
+  async deleteTask(id: number) {
+    await prisma.task.delete({ where: { id } });
+    return true;
   }
 }

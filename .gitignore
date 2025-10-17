@@ -34,3 +34,5 @@ coverage/
 
 # Ignore local database or storage
 src/storage/*.json
+
+/src/generated/prisma

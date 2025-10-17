@@ -7,7 +7,7 @@ export function errorHandler(
   res: Response,
   next: NextFunction
 ) {
-  console.error("Error caught by middleware:", err);
+  console.error("Error caught by middleware:", err.message);
 
   if (err instanceof ZodError) {
     return res.status(400).json({
@@ -32,6 +32,7 @@ export function errorHandler(
     message,
     error: err.errors || null,
   });
+  next();
 }
 
 export function throwError(

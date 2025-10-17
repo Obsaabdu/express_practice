@@ -10,12 +10,9 @@ export async function getTasks(
   next: NextFunction
 ) {
   try {
-    res.status(200).json({
-      success: true,
-      message: "Tasks fetched successfully.",
-      data: await service.listTasks(),
-    });
-  } catch (err: any) {
+    const tasks = await service.listTasks();
+    res.status(200).json({ success: true, data: tasks });
+  } catch (err) {
     next(err);
   }
 }
@@ -29,12 +26,7 @@ export async function getTaskById(
     const id = Number(req.params.id);
     const task = await service.getTask(id);
     if (!task) throwError("Task not found", 404);
-
-    return res.status(200).json({
-      success: true,
-      message: `Task ${id} fetched successfully.`,
-      data: task,
-    });
+    res.status(200).json({ success: true, data: task });
   } catch (err: any) {
     next(err);
   }
@@ -42,13 +34,9 @@ export async function getTaskById(
 
 export async function addTask(req: Request, res: Response, next: NextFunction) {
   try {
-    const task = await service.createTask(req.body);
+    const task = await service.createTask(req.body.title);
 
-    res.status(201).json({
-      status: true,
-      message: "Task added successfully",
-      data: task,
-    });
+    res.status(201).json({ success: true, data: task });
   } catch (err: any) {
     next(err);
   }
@@ -67,34 +55,26 @@ export async function updateTask(
     const task = service.updateTask(id, updates);
     if (!task) throwError("Task not found", 404);
 
-    res.status(200).json({
-      success: true,
-      message: `Task updated successfully.`,
-      data: task,
-    });
+    res.status(200).json({ success: true, data: task });
   } catch (err) {
     next(err);
   }
 }
 
-export async function deleteTask(req: Request, res: Response) {
-  const id = Number(req.params.id);
-
-  if (!service.deleteTask(id)) throwError("Task not found", 404);
-  res.status(200).json({
-    success: true,
-    message: `Task ${id} deleted successfully`,
-  });
-}
-
-export async function clearAllTasks(
+export async function deleteTask(
   req: Request,
   res: Response,
   next: NextFunction
 ) {
   try {
-    await service.clearAll();
+    const id = Number(req.params.id);
+
+    await service.deleteTask(id);
+    res.status(200).json({
+      success: true,
+      message: `Task ${id} deleted successfully`,
+    });
   } catch (err) {
-    next(err);
+    next();
   }
 }
